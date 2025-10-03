@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>StreamSupport</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <header class="app-header">
+        <h1>StreamSupport</h1>
+        <p class="subtitle">Conecta, apoya y sube en el ranking</p>
+    </header>
+
+    <main>
+        <section id="auth-container" class="card center">
+            <button id="twitch-login" class="btn">Iniciar con Twitch</button>
+            <p class="muted">Conéctate para agendar y ver tu ranking.</p>
+        </section>
+
+        <section id="dashboard" class="hidden">
+            <nav class="nav">
+                <button id="live-streams" class="nav-btn active">Streams en Vivo</button>
+                <button id="points-ranking" class="nav-btn">Puntos y Ranking</button>
+                <button id="schedule-support" class="nav-btn">Agendar Apoyo</button>
+                <button id="logout" class="nav-btn danger">Cerrar sesión</button>
+            </nav>
+
+            <div id="content-area" class="card">
+                <!-- Aquí el contenido dinámico -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <small>Hecho para streamers — despliega en GitHub Pages</small>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
