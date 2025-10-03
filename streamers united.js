@@ -1,5 +1,5 @@
 // --- CONFIG ---
-const TWITCH_CLIENT_ID = 'TU_CLIENT_ID_AQUI';
+const TWITCH_CLIENT_ID = 'aqsiwhh0et4lwfrcb6qky6dwe8ig4l';
 const TWITCH_REDIRECT_URI = 'https://tuusuario.github.io/tu-repo'; // debe coincidir con la app registrada en Twitch
 const TWITCH_SCOPES = encodeURIComponent('user:read:email'); // podrías ampliar scopes si necesitas más
 const TWITCH_AUTH_URL = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(TWITCH_REDIRECT_URI)}&response_type=token&scope=${TWITCH_SCOPES}`;
@@ -334,3 +334,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     // chequear expiry cada minuto (simple)
     setInterval(checkTokenExpiry, 60_000);
 });
+
