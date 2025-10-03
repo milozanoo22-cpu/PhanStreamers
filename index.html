@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plataforma de apoyo mutuo entre streamers de Twitch">
+    <meta name="author" content="StreamSupport">
+    <title>StreamSupport - Plataforma de Apoyo Mutuo</title>
+    
+    <!-- Enlace al archivo CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>🚀 StreamSupport</h1>
+                <p>Plataforma de Apoyo Mutuo entre Streamers</p>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('registro')">📝 Registro</button>
+                <button class="tab-btn" onclick="showTab('envivo')">🔴 En Vivo</button>
+                <button class="tab-btn" onclick="showTab('puntos')">⭐ Sistema de Puntos</button>
+                <button class="tab-btn" onclick="showTab('ranking')">🏆 Ranking</button>
+                <button class="tab-btn" onclick="showTab('horarios')">📅 Horarios</button>
+                <button class="tab-btn" onclick="showTab('interacciones')">💬 Interacciones</button>
+            </div>
+        </header>
+
+        <!-- Tab Registro -->
+        <div id="registro" class="tab-content active">
+            <div class="card">
+                <h2>🎮 Registro de Canal de Twitch</h2>
+                <form id="registroForm">
+                    <div class="form-group">
+                        <label for="twitchChannel">Canal de Twitch:</label>
+                        <input type="text" id="twitchChannel" placeholder="Ej: shroud" required>
+                        <small style="color: #666; font-size: 12px;">Se verificará automáticamente con la API de Twitch</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="streamerName">Nombre del Streamer:</label>
+                        <input type="text" id="streamerName" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="streamCategory">Categoría Principal:</label>
+                        <select id="streamCategory">
+                            <option value="">Seleccionar categoría</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="music">Música</option>
+                            <option value="art">Arte</option>
+                            <option value="chatting">Charlando</option>
+                            <option value="coding">Programación</option>
+                            <option value="other">Otro</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">🔍 Verificar y Registrar Canal</button>
+                </form>
+                
+                <div id="channelVerification" style="margin-top: 20px; padding: 15px; border-radius: 10px; display: none;">
+                    <!-- Aquí se mostrará la verificación del canal -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🔐 Autenticación con Twitch</h3>
+                <p>Para funcionalidades avanzadas, conecta tu cuenta de Twitch oficial:</p>
+                <button class="btn" onclick="authenticateWithTwitch()">🔗 Conectar con Twitch</button>
+                <div id="authStatus" style="margin-top: 15px;">
+                    <span id="authIndicator">❌ No autenticado</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab En Vivo -->
+        <div id="envivo" class="tab-content">
+            <div class="card">
+                <h2>🔴 Streamers En Vivo - ¡Apoya y Gana Puntos!</h2>
+                <p>Descubre qué streamers de la comunidad están transmitiendo ahora y gana puntos apoyándolos.</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <button class="btn" onclick="refreshLiveStreams()">🔄 Actualizar En Vivo</button>
+                    <div id="liveCount" class="points">🔴 0 streamers en vivo</div>
+                </div>
+                
+                <div id="liveStreamersGrid" class="streamer-grid">
+                    <p style="text-align: center; color: #666; grid-column: 1 / -1;">Cargando streamers en vivo...</p>
+                </div>
+                
+                <div class="card" style="margin-top: 20px; background: linear-gradient(135deg, #ff6b6b, #ee5a24);">
+                    <h3 style="color: white; margin-bottom: 15px;">⚡ Sesión de Apoyo Activa</h3>
+                    <div id="currentSupportSession" style="color: white;">
+                        <p>No hay sesión activa. ¡Empieza a apoyar a un streamer!</p>
+                    </div>
+                    <button class="btn" onclick="stopSupportSession()" id="stopSessionBtn" style="display: none; background: rgba(255,255,255,0.2);">⏹️ Finalizar Sesión</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Sistema de Puntos -->
+        <div id="puntos" class="tab-content">
+            <div class="card">
+                <h2>⭐ Sistema de Puntos por Apoyo</h2>
+                <p>Gana puntos viendo y apoyando a otros streamers de la comunidad.</p>
+                
+                <div class="streamer-grid">
+                    <div class="streamer-card">
+                        <div class="streamer-avatar">JS</div>
+                        <h3>JuanStreamer</h3>
+                        <div class="points">1,250 puntos</div>
+                        <div class="support-percentage">85% apoyo recibido</div>
+                        <button class="btn" onclick="watchStream('JuanStreamer')">👁️ Ver Stream</button>
+                    </div>
+                    <div class="streamer-card">
+                        <div class="streamer-avatar">MG</div>
+                        <h3>MariaGamer</h3>
+                        <div class="points">980 puntos</div>
+                        <div class="support-percentage">72% apoyo recibido</div>
+                        <button class="btn" onclick="watchStream('MariaGamer')">👁️ Ver Stream</button>
+                    </div>
+                    <div class="streamer-card">
+                        <div class="streamer-avatar">CA</div>
+                        <h3>CarlosArt</h3>
+                        <div class="points">1,450 puntos</div>
+                        <div class="support-percentage">91% apoyo recibido</div>
+                        <button class="btn" onclick="watchStream('CarlosArt')">👁️ Ver Stream</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Mis Estadísticas de Apoyo</h3>
+                <div class="analytics-card">
+                    <div class="analytics-number">750</div>
+                    <div class="analytics-label">Puntos Totales Ganados</div>
+                </div>
+                <div class="interaction-tracker">
+                    <h4>Actividad Reciente:</h4>
+                    <div class="interaction-item">
+                        <span>Viste a JuanStreamer por 2 horas</span>
+                        <span>+50 puntos <span class="status-indicator status-active"></span></span>
+                    </div>
+                    <div class="interaction-item">
+                        <span>Comentaste en stream de MariaGamer</span>
+                        <span>+25 puntos <span class="status-indicator status-active"></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Ranking -->
+        <div id="ranking" class="tab-content">
+            <div class="card">
+                <h2>🏆 Ranking de Apoyo Mutuo</h2>
+                <p>Clasificación basada en el porcentaje de apoyo dado a otros streamers.</p>
+                
+                <ol class="ranking-list">
+                    <li class="ranking-item">
+                        <div class="rank-position">1</div>
+                        <div class="rank-info">
+                            <div class="rank-name">CarlosArt</div>
+                            <div class="rank-stats">91% apoyo dado • 1,450 puntos • 5 horas semanales</div>
+                        </div>
+                    </li>
+                    <li class="ranking-item">
+                        <div class="rank-position">2</div>
+                        <div class="rank-info">
+                            <div class="rank-name">JuanStreamer</div>
+                            <div class="rank-stats">85% apoyo dado • 1,250 puntos • 4 horas semanales</div>
+                        </div>
+                    </li>
+                    <li class="ranking-item">
+                        <div class="rank-position">3</div>
+                        <div class="rank-info">
+                            <div class="rank-name">MariaGamer</div>
+                            <div class="rank-stats">72% apoyo dado • 980 puntos • 3 horas semanales</div>
+                        </div>
+                    </li>
+                    <li class="ranking-item">
+                        <div class="rank-position">4</div>
+                        <div class="rank-info">
+                            <div class="rank-name">TuUsuario</div>
+                            <div class="rank-stats">65% apoyo dado • 750 puntos • 2 horas semanales</div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Tab Horarios -->
+        <div id="horarios" class="tab-content">
+            <div class="card">
+                <h2>📅 Sistema de Agendamiento Semanal</h2>
+                <p>Agenda tus horas de streaming según tu porcentaje de apoyo (8:00 AM - 11:00 PM Colombia).</p>
+                
+                <div class="analytics-card">
+                    <div class="analytics-number">2</div>
+                    <div class="analytics-label">Horas Disponibles Esta Semana<br>(Basado en tu 65% de apoyo)</div>
+                </div>
+                
+                <div class="schedule-grid" id="scheduleGrid">
+                    <div class="schedule-header">Hora</div>
+                    <div class="schedule-header">Lun</div>
+                    <div class="schedule-header">Mar</div>
+                    <div class="schedule-header">Mié</div>
+                    <div class="schedule-header">Jue</div>
+                    <div class="schedule-header">Vie</div>
+                    <div class="schedule-header">Sáb</div>
+                    <div class="schedule-header">Dom</div>
+                </div>
+                
+                <button class="btn" onclick="generateSchedule()">🔄 Generar Horario Semanal</button>
+            </div>
+        </div>
+
+        <!-- Tab Interacciones -->
+        <div id="interacciones" class="tab-content">
+            <div class="card">
+                <h2>💬 Monitor de Interacciones</h2>
+                <p>Seguimiento de comentarios y participación para validar apoyo real.</p>
+                
+                <div class="form-group">
+                    <label for="streamToMonitor">Stream a Monitorear:</label>
+                    <select id="streamToMonitor">
+                        <option value="JuanStreamer">JuanStreamer - En vivo</option>
+                        <option value="CarlosArt">CarlosArt - En vivo</option>
+                    </select>
+                </div>
+                
+                <div class="interaction-tracker">
+                    <h4>🔍 Análisis en Tiempo Real:</h4>
+                    <div class="interaction-item">
+                        <span>Comentarios detectados: 15</span>
+                        <span class="status-indicator status-active"></span>
+                    </div>
+                    <div class="interaction-item">
+                        <span>Tiempo de visualización: 45 min</span>
+                        <span class="status-indicator status-active"></span>
+                    </div>
+                    <div class="interaction-item">
+                        <span>Participación activa: ✅ Verificada</span>
+                        <span class="status-indicator status-active"></span>
+                    </div>
+                    <div class="interaction-item">
+                        <span>Puntos ganados esta sesión: +75</span>
+                        <span class="status-indicator status-active"></span>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startMonitoring()">🚀 Iniciar Monitoreo Automático</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enlace al archivo JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

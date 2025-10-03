@@ -1,0 +1,583 @@
+/* Estilos Generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Contenedor Principal */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo h1 {
+    font-size: 3em;
+    background: linear-gradient(45deg, #9146ff, #00f5ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+.logo p {
+    color: #666;
+    font-size: 1.1em;
+}
+
+/* Sistema de Tabs */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #9146ff, #00f5ff);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.tab-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(145, 70, 255, 0.3);
+}
+
+.tab-btn.active {
+    background: linear-gradient(45deg, #764ba2, #667eea);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Cards */
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+}
+
+.card h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+/* Formularios */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #9146ff;
+    box-shadow: 0 0 0 3px rgba(145, 70, 255, 0.1);
+}
+
+/* Botones */
+.btn {
+    background: linear-gradient(45deg, #9146ff, #00f5ff);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(145, 70, 255, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Grid de Streamers */
+.streamer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.streamer-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.streamer-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.streamer-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #9146ff, #00f5ff);
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.points {
+    font-size: 18px;
+    font-weight: 600;
+    color: #9146ff;
+    margin: 10px 0;
+}
+
+.support-percentage {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Streams en Vivo */
+.live-indicator {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ff4444;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+.stream-preview {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(45deg, #333, #555);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.stream-preview:hover {
+    transform: scale(1.02);
+}
+
+.stream-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+    padding: 20px 15px 15px;
+}
+
+.stream-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stream-category {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.viewer-count {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 11px;
+}
+
+/* Timer de Apoyo */
+.support-timer {
+    background: rgba(145, 70, 255, 0.1);
+    border: 2px solid #9146ff;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.timer-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: #9146ff;
+    margin-bottom: 5px;
+}
+
+.points-earned {
+    font-size: 16px;
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* Embed de Twitch */
+.twitch-embed {
+    width: 100%;
+    height: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.twitch-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Horario Semanal */
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 100px repeat(7, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.schedule-header, .schedule-cell {
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    background: white;
+}
+
+.schedule-header {
+    background: #9146ff;
+    color: white;
+    font-weight: 600;
+}
+
+.schedule-slot {
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+.schedule-slot:hover {
+    background: #e9ecef;
+}
+
+.schedule-slot.available {
+    background: #d4edda;
+    color: #155724;
+}
+
+.schedule-slot.taken {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.schedule-slot.my-slot {
+    background: #9146ff;
+    color: white;
+    font-weight: 600;
+}
+
+/* Tracker de Interacciones */
+.interaction-tracker {
+    background: rgba(145, 70, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.interaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.interaction-item:last-child {
+    border-bottom: none;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.status-active {
+    background: #28a745;
+    box-shadow: 0 0 10px #28a745;
+}
+
+.status-inactive {
+    background: #dc3545;
+}
+
+/* Ranking */
+.ranking-list {
+    list-style: none;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, rgba(145, 70, 255, 0.1), rgba(0, 245, 255, 0.1));
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.ranking-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.rank-position {
+    font-size: 24px;
+    font-weight: bold;
+    color: #9146ff;
+    margin-right: 20px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.rank-info {
+    flex: 1;
+}
+
+.rank-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.rank-stats {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Analytics Card */
+.analytics-card {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.analytics-number {
+    font-size: 3em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.analytics-label {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+/* Notificaciones */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    max-width: 300px;
+    animation: slideIn 0.3s ease;
+}
+
+.notification.success {
+    background: #28a745;
+    color: white;
+}
+
+.notification.warning {
+    background: #ffc107;
+    color: #333;
+}
+
+.notification.error {
+    background: #dc3545;
+    color: white;
+}
+
+.notification.info {
+    background: #17a2b8;
+    color: white;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .logo h1 {
+        font-size: 2em;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        width: 100%;
+    }
+
+    .streamer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-grid {
+        grid-template-columns: 80px repeat(7, 1fr);
+        font-size: 10px;
+    }
+
+    .schedule-header, .schedule-cell {
+        padding: 5px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 1.5em;
+    }
+
+    .analytics-number {
+        font-size: 2em;
+    }
+
+    .notification {
+        left: 10px;
+        right: 10px;
+        max-width: calc(100% - 20px);
+    }
+}
