@@ -348,51 +348,179 @@ document.addEventListener('DOMContentLoaded', function() {
 // ========================================
 // AUTENTICACIÓN CON TWITCH
 // ========================================
+/**
+ * Función principal de autenticación con Twitch
+ */
 function authenticateWithTwitch() {
-    showNotification('info', '🔗 Abriendo Twitch', 'Iniciando autenticación segura...');
+    console.log('🔐 Iniciando autenticación con Twitch...');
     
-    // Abrir ventana de autenticación
+    showNotification('info', '🔗 Conectando', 'Abriendo ventana de autenticación de Twitch...');
+    
+    // Construir URL de autenticación de Twitch
+    const scopes = TWITCH_CONFIG.scopes.join(' ');
+    const state = generateRandomState();
+    
+    // Guardar el state para validarlo después
+    sessionStorage.setItem('twitch_auth_state', state);
+    
+    const authUrl = `https://id.twitch.tv/oauth2/authorize?` +
+        `client_id=${TWITCH_CONFIG.clientId}` +
+        `&redirect_uri=${encodeURIComponent(TWITCH_CONFIG.redirectUri)}` +
+        `&response_type=token` +
+        `&scope=${encodeURIComponent(scopes)}` +
+        `&state=${state}`;
+    
+    console.log('🌐 URL de autenticación:', authUrl);
+    
+    // Calcular posición centrada de la ventana
+    const width = 500;
+    const height = 700;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+    
+    // Abrir ventana popup
     const authWindow = window.open(
-        `${API_BASE_URL}/auth/twitch`, 
-        'TwitchAuth', 
-        'width=500,height=600,scrollbars=yes,resizable=yes'
+        authUrl,
+        'TwitchAuth',
+        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
     );
+    
+    if (!authWindow) {
+        showNotification('error', '❌ Error', 'No se pudo abrir la ventana. Habilita los popups para este sitio.');
+        return;
+    }
+    
     // Escuchar mensajes del callback
     const handleAuthMessage = (event) => {
+        // Verificar origen (seguridad)
+        if (event.origin !== window.location.origin) {
+            return;
+        }
+        
         if (event.data.type === 'TWITCH_AUTH_SUCCESS') {
             window.removeEventListener('message', handleAuthMessage);
             
-            const { token, user } = event.data.data;
+            const { access_token, state: returnedState } = event.data;
             
+            // Validar state
+            const savedState = sessionStorage.getItem('twitch_auth_state');
+            if (returnedState !== savedState) {
+                showNotification('error', '❌ Error de seguridad', 'State inválido');
+                return;
+            }
+            
+            // Guardar token
+            twitchAuth.accessToken = access_token;
             twitchAuth.isAuthenticated = true;
-            twitchAuth.accessToken = token;
-            twitchAuth.userInfo = user;
             
-            document.getElementById('authIndicator').innerHTML = `✅ Autenticado como ${user.display_name}`;
-            showNotification('success', '🎉 ¡Autenticado!', `Bienvenido ${user.display_name}`);
+            // Obtener información del usuario
+            getUserInfo(access_token);
             
-            // Actualizar usuario actual si es necesario
-            if (!currentUser.channel || currentUser.channel === 'tucanal') {
-                currentUser.name = user.display_name;
-                currentUser.channel = user.login;
-                currentUser.twitchData = user;
+            // Cerrar ventana de auth
+            if (authWindow && !authWindow.closed) {
+                authWindow.close();
             }
             
         } else if (event.data.type === 'TWITCH_AUTH_ERROR') {
             window.removeEventListener('message', handleAuthMessage);
-            showNotification('error', '❌ Error de autenticación', event.data.error);
+            showNotification('error', '❌ Error de autenticación', event.data.error || 'Error desconocido');
+            
+            if (authWindow && !authWindow.closed) {
+                authWindow.close();
+            }
         }
     };
     
     window.addEventListener('message', handleAuthMessage);
     
-    // Limpiar listener si la ventana se cierra manualmente
+    // Detectar si la ventana se cierra sin completar auth
     const checkClosed = setInterval(() => {
-        if (authWindow && authWindow.closed) {
+        if (authWindow.closed) {
             clearInterval(checkClosed);
             window.removeEventListener('message', handleAuthMessage);
+            
+            if (!twitchAuth.isAuthenticated) {
+                showNotification('info', 'ℹ️ Cancelado', 'Autenticación cancelada');
+            }
         }
-    }, 1000);
+    }, 500);
+}
+
+/**
+ * Obtiene información del usuario desde la API de Twitch
+ */
+async function getUserInfo(accessToken) {
+    try {
+        showNotification('info', '🔄 Cargando', 'Obteniendo información del usuario...');
+        
+        const response = await fetch('https://api.twitch.tv/helix/users', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Client-Id': TWITCH_CONFIG.clientId
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error al obtener información del usuario');
+        }
+        
+        const data = await response.json();
+        const user = data.data[0];
+        
+        twitchAuth.userInfo = user;
+        
+        // Actualizar UI
+        const authIndicator = document.getElementById('authIndicator');
+        if (authIndicator) {
+            authIndicator.innerHTML = `✅ Autenticado como ${user.display_name}`;
+        }
+        
+        // Actualizar usuario actual
+        currentUser.name = user.display_name;
+        currentUser.channel = user.login;
+        currentUser.twitchData = user;
+        
+        showNotification('success', '🎉 ¡Autenticado!', `Bienvenido ${user.display_name}`);
+        
+        console.log('✅ Usuario autenticado:', user);
+        
+    } catch (error) {
+        console.error('❌ Error obteniendo info del usuario:', error);
+        showNotification('error', '❌ Error', 'No se pudo obtener la información del usuario');
+        
+        // Limpiar autenticación fallida
+        twitchAuth.isAuthenticated = false;
+        twitchAuth.accessToken = null;
+    }
+}
+
+/**
+ * Genera un state aleatorio para OAuth (seguridad)
+ */
+function generateRandomState() {
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Cierra sesión de Twitch
+ */
+function logoutFromTwitch() {
+    twitchAuth = {
+        accessToken: null,
+        isAuthenticated: false,
+        userInfo: null
+    };
+    
+    sessionStorage.removeItem('twitch_auth_state');
+    
+    const authIndicator = document.getElementById('authIndicator');
+    if (authIndicator) {
+        authIndicator.innerHTML = '❌ No autenticado';
+    }
+    
+    showNotification('info', '👋 Sesión cerrada', 'Has cerrado sesión de Twitch');
 }
 
 // ========================================
@@ -704,6 +832,7 @@ window.addEventListener('load', function() {
 // Auto-guardar datos cada 30 segundos
 
 setInterval(saveUserData, 30000);
+
 
 
 
