@@ -1,12 +1,6 @@
 // ========================================
 // CONFIGURACIÓN INICIAL
 // ========================================
-
-// URL base de la API (cambiar según tu configuración)
-const API_BASE_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000' 
-    : 'https://tu-backend-url.herokuapp.com'; // Cambiar por tu URL de backend en producción
-
 // Configuración de Twitch
 const TWITCH_CONFIG = {
     clientId: 'q2wff2pvt5waw4440bpwyxapppq5vm',
@@ -832,6 +826,7 @@ window.addEventListener('load', function() {
 // Auto-guardar datos cada 30 segundos
 
 setInterval(saveUserData, 30000);
+
 
 
 
