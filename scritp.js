@@ -290,7 +290,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // ========================================
 // AUTENTICACIÓN CON TWITCH
 // ========================================
-
 function authenticateWithTwitch() {
     showNotification('info', '🔗 Abriendo Twitch', 'Iniciando autenticación segura...');
     
@@ -300,7 +299,6 @@ function authenticateWithTwitch() {
         'TwitchAuth', 
         'width=500,height=600,scrollbars=yes,resizable=yes'
     );
-    
     // Escuchar mensajes del callback
     const handleAuthMessage = (event) => {
         if (event.data.type === 'TWITCH_AUTH_SUCCESS') {
@@ -648,3 +646,4 @@ window.addEventListener('load', function() {
 // Auto-guardar datos cada 30 segundos
 
 setInterval(saveUserData, 30000);
+
