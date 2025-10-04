@@ -124,16 +124,41 @@ class TwitchAPI {
         try {
             console.log(`🔍 Verificando canal: ${channelName}`);
             
-            const response = await fetch(`${API_BASE_URL}/api/twitch/validate/${channelName}`);
+            // Llamar directamente a la API de Twitch
+            const response = await fetch(`https://api.twitch.tv/helix/users?login=${channelName}`, {
+                headers: {
+                    'Client-ID': TWITCH_CONFIG.clientId,
+                    'Authorization': 'Bearer ' + (twitchAuth.accessToken || '')
+                }
+            });
+            
+            if (!response.ok) {
+                // Si no está autenticado, necesitamos un token de app
+                throw new Error('Necesitas autenticarte primero para verificar canales');
+            }
+            
             const data = await response.json();
             
-            return data;
+            if (data.data && data.data.length > 0) {
+                return {
+                    success: true,
+                    data: data.data[0],
+                    message: 'Canal verificado exitosamente'
+                };
+            } else {
+                return {
+                    success: false,
+                    data: null,
+                    message: 'Canal no encontrado en Twitch'
+                };
+            }
+            
         } catch (error) {
             console.error('Error en validación:', error);
             return {
                 success: false,
                 data: null,
-                message: 'Error de conexión con el servidor. Verifica que el backend esté corriendo.'
+                message: 'Debes autenticarte con Twitch primero para verificar canales'
             };
         }
     }
@@ -144,31 +169,64 @@ class TwitchAPI {
                 return { success: true, data: [], message: 'No hay streamers registrados' };
             }
 
-            const response = await fetch(`${API_BASE_URL}/api/twitch/streams`, {
-                method: 'POST',
+            if (!twitchAuth.accessToken) {
+                return {
+                    success: false,
+                    data: [],
+                    message: 'Debes autenticarte con Twitch primero'
+                };
+            }
+
+            const params = userLogins.map(login => `user_login=${login}`).join('&');
+            const response = await fetch(`https://api.twitch.tv/helix/streams?${params}`, {
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ userLogins })
+                    'Client-ID': TWITCH_CONFIG.clientId,
+                    'Authorization': 'Bearer ' + twitchAuth.accessToken
+                }
             });
 
+            if (!response.ok) {
+                throw new Error('Error al obtener streams');
+            }
+
             const data = await response.json();
-            return data;
+            
+            return {
+                success: true,
+                data: data.data || [],
+                message: `${data.data.length} streams encontrados`
+            };
+            
         } catch (error) {
             console.error('Error obteniendo streams:', error);
             return {
                 success: false,
                 data: [],
-                message: 'Error de conexión con el servidor'
+                message: 'Error al obtener streams en vivo'
             };
         }
     }
 
     static async getGameInfo(gameId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/twitch/games/${gameId}`);
+            if (!twitchAuth.accessToken) {
+                return null;
+            }
+
+            const response = await fetch(`https://api.twitch.tv/helix/games?id=${gameId}`, {
+                headers: {
+                    'Client-ID': TWITCH_CONFIG.clientId,
+                    'Authorization': 'Bearer ' + twitchAuth.accessToken
+                }
+            });
+
+            if (!response.ok) {
+                return null;
+            }
+
             const data = await response.json();
-            return data;
+            return data.data && data.data.length > 0 ? data.data[0] : null;
+            
         } catch (error) {
             console.error('Error obteniendo info del juego:', error);
             return null;
@@ -646,6 +704,7 @@ window.addEventListener('load', function() {
 // Auto-guardar datos cada 30 segundos
 
 setInterval(saveUserData, 30000);
+
 
 
 
