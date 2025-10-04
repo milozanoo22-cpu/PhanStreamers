@@ -10,7 +10,7 @@ const API_BASE_URL = window.location.hostname === 'localhost'
 // Configuración de Twitch
 const TWITCH_CONFIG = {
     clientId: 'q2wff2pvt5waw4440bpwyxapppq5vm',
-    redirectUri: 'https://TU-USUARIO.github.io/TU-REPOSITORIO/callback.html', // ⬅️ Cambiar esto
+    redirectUri: 'https://milozanoo22-cpu.github.io/PhanStreamers', // ⬅️ Cambiar esto
     scopes: ['user:read:email', 'chat:read', 'channel:read:subscriptions']
 };
 
@@ -646,5 +646,6 @@ window.addEventListener('load', function() {
 // Auto-guardar datos cada 30 segundos
 
 setInterval(saveUserData, 30000);
+
 
 
