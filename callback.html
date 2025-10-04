@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación - StreamSupport</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .success {
+            font-size: 48px;
+            animation: scaleIn 0.5s ease;
+        }
+        .error {
+            color: #ff6b6b;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="status">
+            <div class="spinner"></div>
+            <h2>Procesando autenticación...</h2>
+            <p>Por favor espera un momento</p>
+        </div>
+    </div>
+
+    <script>
+        // Función para parsear el hash de la URL
+        function parseHash() {
+            const hash = window.location.hash.substring(1);
+            const params = {};
+            
+            hash.split('&').forEach(param => {
+                const [key, value] = param.split('=');
+                params[key] = decodeURIComponent(value);
+            });
+            
+            return params;
+        }
+
+        // Procesar la respuesta de Twitch
+        function processAuth() {
+            const params = parseHash();
+            const statusDiv = document.getElementById('status');
+
+            if (params.access_token) {
+                // Autenticación exitosa
+                statusDiv.innerHTML = `
+                    <div class="success">✅</div>
+                    <h2>¡Autenticación Exitosa!</h2>
+                    <p>Redirigiendo...</p>
+                `;
+
+                // Enviar mensaje al opener (ventana principal)
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'TWITCH_AUTH_SUCCESS',
+                        access_token: params.access_token,
+                        state: params.state
+                    }, window.location.origin);
+
+                    // Cerrar ventana después de 1 segundo
+                    setTimeout(() => {
+                        window.close();
+                    }, 1000);
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="error">❌</div>
+                        <h2>Error</h2>
+                        <p>No se pudo comunicar con la ventana principal</p>
+                        <p><small>Puedes cerrar esta ventana</small></p>
+                    `;
+                }
+
+            } else if (params.error) {
+                // Error en la autenticación
+                statusDiv.innerHTML = `
+                    <div class="error">❌</div>
+                    <h2>Error de Autenticación</h2>
+                    <p>${params.error_description || params.error}</p>
+                    <p><small>Puedes cerrar esta ventana</small></p>
+                `;
+
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'TWITCH_AUTH_ERROR',
+                        error: params.error_description || params.error
+                    }, window.location.origin);
+
+                    setTimeout(() => {
+                        window.close();
+                    }, 3000);
+                }
+
+            } else {
+                // No hay datos válidos
+                statusDiv.innerHTML = `
+                    <div class="error">❌</div>
+                    <h2>No se recibieron datos</h2>
+                    <p>La autenticación fue cancelada o falló</p>
+                    <p><small>Puedes cerrar esta ventana</small></p>
+                `;
+            }
+        }
+
+        // Ejecutar cuando la página cargue
+        window.addEventListener('load', processAuth);
+    </script>
+</body>
+</html>
